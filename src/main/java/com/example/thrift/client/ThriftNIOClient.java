@@ -4,22 +4,23 @@ import com.example.thrift.service.TestService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 
 @Slf4j
-public class ThriftClient {
+public class ThriftNIOClient {
     public static void main(String[] args) {
         TTransport transport = null;
         try {
             //TSocket 参数分别是：服务器地址，端口，连接超时时间(毫秒)
-            transport = new TSocket("localhost", 1998, 30000);
+            transport = new TFramedTransport(new TSocket("localhost", 1998, 30000));
             TProtocol protocol = new TBinaryProtocol(transport);
             TestService.Client client = new TestService.Client(protocol);
             transport.open();
 
             //这里得到返回数据是同步的
-            String reply = client.sayHello("Hello, I'm Client");
+            String reply = client.sayHello("Hello, I'm NIO Client");
             log.info(">>>收到回复消息：{}", reply);
 
             //如果需要异步，不要返回数据可以使用send_***方法
@@ -30,6 +31,7 @@ public class ThriftClient {
         } catch (Exception e) {
             log.error("Thrift客户端发生错误", e);
         } finally {
+            //NIO版本这一定要注意关闭transport
             if (transport != null) {
                 transport.close();
             }

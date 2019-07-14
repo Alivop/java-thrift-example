@@ -14,17 +14,17 @@ public class ThriftServer {
     public void start() {
         try {
             log.info(">>>Thrift服务端开启");
-            TServerSocket serverTransport = new TServerSocket(1998);
+            TServerSocket serverSocket = new TServerSocket(1998);
             TProcessor tProcessor = new TestService.Processor<TestService.Iface>(new TestServiceImpl());
 
-            //单线程版
-            TSimpleServer.Args sArgs = new  TSimpleServer.Args(serverTransport);
+            //BIO单线程版
+            TSimpleServer.Args sArgs = new  TSimpleServer.Args(serverSocket);
             sArgs.processor(tProcessor);
             TServer server = new TSimpleServer(sArgs);
 
-            //多线程版
+            //BIO多线程版
             /*
-            TThreadPoolServer.Args tArgs = new TThreadPoolServer.Args(serverTransport);
+            TThreadPoolServer.Args tArgs = new TThreadPoolServer.Args(serverSocket);
             tArgs.processor(tProcessor);
             tArgs.minWorkerThreads(2);
             tArgs.maxWorkerThreads(10);

@@ -145,7 +145,6 @@ public class TestService {
         return false;
       }
 
-      @Override
       protected boolean handleRuntimeExceptions() {
         return false;
       }
